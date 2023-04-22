@@ -1,39 +1,199 @@
-<!-- 
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+[![pub package](https://img.shields.io/pub/v/hadith.svg)](https://pub.dev/packages/hadith)
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages). 
+This flutter plugin provides access to the Hadith data offline.
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages). 
--->
+Available Hadith data:
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+- Bukhari
+- Muslim
+- Abu Dawud
+- Tirmidhi
+- Nasai
+- Ibn Majah
 
-## Features
+Hadith data is taken from sunnah.com.
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+## Getting Started
 
-## Getting started
+To use this plugin, add `hadith` as a [dependency in your pubspec.yaml file](https://flutter.io/platform-plugins/).
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+**Functions:**
 
-## Usage
+**_Collections:_**
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder. 
+- **`getCollections()`** - Returns a list of Hadith collections available
+- **`getCollection(Collection collection)`** - Takes [collection] as an argument and returns a [Collection] object.
+- **`getCollectionData(Collections collection, Languages language)`** - Takes [collection] and [language] as arguments and returns a [CollectionData] object.
+
+**Books:\_**
+
+- **`getBooks(Collections collection)`** - Takes [collection] as an argument and returns a list of [Book] objects.
+- **`getBook(Collections collection, int bookNumber)`** - Takes [collection] and [bookNumber] as arguments and returns a [Book] object.
+- **`getBookData(Collections collection, int bookNumber, Languages language)`** - Takes [collection], [bookNumber] and [language] as arguments and returns a [BookData] object.
+
+**_Hadiths:_**
+
+- **`getHadiths(Collections collection, int bookNumber)`** - Takes [collection] and [bookNumber] as arguments and returns a list of [Hadith] objects.
+- **`getHadith(Collections collection, int bookNumber, int hadithNumber)`** - Takes [collection], [bookNumber] and [hadithNumber] as arguments and returns a [Hadith] object.
+- **`getHadithByNumber(Collections collection, String hadithNumber)`** - Takes [collection] and [hadithNumber] as arguments and returns a [Hadith] object.
+- **`getHadithData(Collections collection, int bookNumber, int hadithNumber, Languages language)`** - Takes [collection], [bookNumber], [hadithNumber] and [language] as arguments and returns a [HadithData] object.
+- **`getHadithDataByNumber(Collections collection, String hadithNumber, Languages language)`** - Takes [collection], [hadithNumber] and [language] as arguments and returns a [HadithData] object.
+
+**_URLs:_**
+
+- **`getCollectionURL(Collections collection)`** - Takes [collection] as argument and returns the URL (from sunnah.com) of that collection
+- **`getBookURL(Collections collection, int bookNumber)`** - Takes [collection] and [bookNumber] as arguments and returns the URL (from sunnah.com) of that book
+
+**Enums:**
+
+**_Collections:_**
+
+- Bukhari - **`Collections.bukhari`**
+- Muslim - **`Collections.muslim`**
+- Abu Dawud - **`Collections.abudawud`**
+- Tirmidhi - **`Collections.tirmidhi`**
+- Nasai - **`Collections.nasai`**
+- Ibn Majah - **`Collections.ibnmajah`**
+
+**_Languages:_**
+
+- English - **`Languages.en`**
+- Arabic - **`Languages.ar`**
+
+## Example
+
+**Collections:**
+
+_Get available collections:_
 
 ```dart
-const like = 'sample';
+import 'package:hadith/hadith.dart';
+
+void main() {
+  print(getCollections());
+}
 ```
 
-## Additional information
+_Get a single collection:_
 
-TODO: Tell users more about the package: where to find more information, how to 
-contribute to the package, how to file issues, what response they can expect 
-from the package authors, and more.
+```dart
+import 'package:hadith/hadith.dart';
+
+void main() {
+  print(getCollection(Collections.bukhari));
+}
+```
+
+_Get collection data:_
+
+```dart
+import 'package:hadith/hadith.dart';
+
+void main() {
+  print(getCollectionData(Collections.bukhari, Languages.en));
+}
+```
+
+**Books:**
+
+_Get books of a collection:_
+
+```dart
+import 'package:hadith/hadith.dart';
+
+void main() {
+  print(getBooks(Collections.bukhari));
+}
+```
+
+_Get a single book:_
+
+```dart
+import 'package:hadith/hadith.dart';
+
+void main() {
+  print(getBook(Collections.bukhari, 1));
+}
+```
+
+_Get book data:_
+
+```dart
+import 'package:hadith/hadith.dart';
+
+void main() {
+  print(getBookData(Collections.bukhari, 1, Languages.en));
+}
+```
+
+**Hadiths:**
+
+_Get hadiths of a book:_
+
+```dart
+import 'package:hadith/hadith.dart';
+
+void main() {
+  print(getHadiths(Collections.bukhari, 1));
+}
+```
+
+_Get a single hadith:_
+
+```dart
+import 'package:hadith/hadith.dart';
+
+void main() {
+  print(getHadith(Collections.bukhari, 1, 1));
+}
+```
+
+_Get hadith data:_
+
+```dart
+import 'package:hadith/hadith.dart';
+
+void main() {
+  print(getHadithData(Collections.bukhari, 1, 1, Languages.en));
+}
+```
+
+_Get hadith data by hadith number:_
+
+```dart
+import 'package:hadith/hadith.dart';
+
+void main() {
+  print(getHadithDataByNumber(Collections.bukhari, '1', Languages.en));
+}
+```
+
+```dart
+import 'package:hadith/hadith.dart';
+
+void main() {
+  print(getHadithDataByNumber(Collections.muslim, '36 b', Languages.en));
+}
+```
+
+**URLs:**
+
+_Get collection URL:_
+
+```dart
+import 'package:hadith/hadith.dart';
+
+void main() {
+  print(getCollectionURL(Collections.bukhari));
+}
+```
+
+_Get book URL:_
+
+```dart
+import 'package:hadith/hadith.dart';
+
+void main() {
+  print(getBookURL(Collections.bukhari, 1));
+}
+```
