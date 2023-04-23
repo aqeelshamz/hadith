@@ -1,5 +1,5 @@
 name: hadith
-description: This flutter plugin provides access to the Hadith data offline.
+description: This dart plugin provides access to the Hadith data offline.
 version: 1.0.0
 homepage: https://github.com/aqeelshamz/hadith
 repository: https://github.com/aqeelshamz/hadith

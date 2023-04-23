@@ -1,6 +1,6 @@
 [![pub package](https://img.shields.io/pub/v/hadith.svg)](https://pub.dev/packages/hadith)
 
-This flutter plugin provides access to the Hadith data offline.
+This dart plugin provides access to the Hadith data offline.
 
 Available Hadith data:
 
