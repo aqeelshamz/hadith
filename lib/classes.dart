@@ -1,3 +1,5 @@
+import 'enums.dart';
+
 class CollectionData {
   final String lang;
   final String title;
@@ -6,13 +8,22 @@ class CollectionData {
   CollectionData(
       {required this.lang, required this.title, required this.shortIntro});
 
+  factory CollectionData.fromJson(Map<String, dynamic> json) {
+    return CollectionData(
+      lang: json['lang'],
+      title: json['title'],
+      shortIntro: json['shortIntro'],
+    );
+  }
+
   @override
   String toString() {
     return '\n{\n lang: $lang,\n title: $title,\n shortIntro: $shortIntro\n}\n';
   }
 }
 
-class Collection {
+class HadithCollection {
+  // Renamed from Collection
   final String name;
   final bool hasBooks;
   final bool hasChapters;
@@ -20,13 +31,29 @@ class Collection {
   final int totalHadith;
   final int totalAvailableHadith;
 
-  Collection(
-      {required this.name,
-      required this.hasBooks,
-      required this.hasChapters,
-      required this.collection,
-      required this.totalHadith,
-      required this.totalAvailableHadith});
+  HadithCollection({
+    required this.name,
+    required this.hasBooks,
+    required this.hasChapters,
+    required this.collection,
+    required this.totalHadith,
+    required this.totalAvailableHadith,
+  });
+
+  factory HadithCollection.fromJson(Map<String, dynamic> json) {
+    var collectionData = (json['collection'] as List)
+        .map((data) => CollectionData.fromJson(data))
+        .toList();
+
+    return HadithCollection(
+      name: json['name'],
+      hasBooks: json['hasBooks'],
+      hasChapters: json['hasChapters'],
+      collection: collectionData,
+      totalHadith: json['totalHadith'],
+      totalAvailableHadith: json['totalAvailableHadith'],
+    );
+  }
 
   @override
   String toString() {
@@ -39,6 +66,13 @@ class BookData {
   final String name;
 
   BookData({required this.lang, required this.name});
+
+  factory BookData.fromJson(Map<String, dynamic> json) {
+    return BookData(
+      lang: json['lang'],
+      name: json['name'],
+    );
+  }
 
   @override
   String toString() {
@@ -53,16 +87,52 @@ class Book {
   final int hadithEndNumber;
   final int numberOfHadith;
 
-  Book(
-      {required this.bookNumber,
-      required this.book,
-      required this.hadithStartNumber,
-      required this.hadithEndNumber,
-      required this.numberOfHadith});
+  Book({
+    required this.bookNumber,
+    required this.book,
+    required this.hadithStartNumber,
+    required this.hadithEndNumber,
+    required this.numberOfHadith,
+  });
+
+  factory Book.fromJson(Map<String, dynamic> json) {
+    var bookData =
+        (json['book'] as List).map((data) => BookData.fromJson(data)).toList();
+
+    return Book(
+      bookNumber: json['bookNumber'],
+      book: bookData,
+      hadithStartNumber: json['hadithStartNumber'],
+      hadithEndNumber: json['hadithEndNumber'],
+      numberOfHadith: json['numberOfHadith'],
+    );
+  }
 
   @override
   String toString() {
     return '\n{\n bookNumber: $bookNumber,\n book: $book,\n hadithStartNumber: $hadithStartNumber,\n hadithEndNumber: $hadithEndNumber,\n numberOfHadith: $numberOfHadith\n}\n';
+  }
+}
+
+class Grade {
+  final String? gradedBy;
+  final String grade;
+
+  Grade({
+    this.gradedBy,
+    required this.grade,
+  });
+
+  factory Grade.fromJson(Map<String, dynamic> json) {
+    return Grade(
+      gradedBy: json['graded_by'],
+      grade: json['grade'],
+    );
+  }
+
+  @override
+  String toString() {
+    return '\n{\n gradedBy: $gradedBy,\n grade: $grade\n}\n';
   }
 }
 
@@ -72,15 +142,31 @@ class HadithData {
   final String chapterTitle;
   final int urn;
   final String body;
-  final List grades;
+  final List<Grade> grades;
 
-  HadithData(
-      {required this.lang,
-      required this.chapterNumber,
-      required this.chapterTitle,
-      required this.urn,
-      required this.body,
-      required this.grades});
+  HadithData({
+    required this.lang,
+    required this.chapterNumber,
+    required this.chapterTitle,
+    required this.urn,
+    required this.body,
+    required this.grades,
+  });
+
+  factory HadithData.fromJson(Map<String, dynamic> json) {
+    print("Parsing HadithData: $json"); // Debugging line
+
+    var gradesFromJson =
+        (json['grades'] as List).map((data) => Grade.fromJson(data)).toList();
+    return HadithData(
+      lang: json['lang'],
+      chapterNumber: json['chapterNumber'].toString(), // Ensuring it's a String
+      chapterTitle: json['chapterTitle'],
+      urn: json['urn'],
+      body: json['body'],
+      grades: gradesFromJson,
+    );
+  }
 
   @override
   String toString() {
@@ -91,16 +177,33 @@ class HadithData {
 class Hadith {
   final String collection;
   final String bookNumber;
-  final String chapterId;
+  final String chapterId; // Keeping it as String
   final String hadithNumber;
   final List<HadithData> hadith;
 
-  Hadith(
-      {required this.collection,
-      required this.bookNumber,
-      required this.chapterId,
-      required this.hadithNumber,
-      required this.hadith});
+  Hadith({
+    required this.collection,
+    required this.bookNumber,
+    required this.chapterId,
+    required this.hadithNumber,
+    required this.hadith,
+  });
+
+  factory Hadith.fromJson(Map<String, dynamic> json) {
+    print("Parsing Hadith: $json"); // Debugging line
+
+    var hadithList = (json['hadith'] as List)
+        .map((data) => HadithData.fromJson(data))
+        .toList();
+
+    return Hadith(
+      collection: json['collection'],
+      bookNumber: json['bookNumber'],
+      chapterId: json['chapterId'].toString(),
+      hadithNumber: json['hadithNumber'].toString(),
+      hadith: hadithList,
+    );
+  }
 
   @override
   String toString() {
