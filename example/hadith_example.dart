@@ -1,40 +1,36 @@
 import 'package:hadith/hadith.dart';
 
 void main() {
-  // Get available collections
-  print(getCollections());
+  HadithService hadithService = HadithService();
 
-  // Get a single collection
-  print(getCollection(Collections.bukhari));
+  List<Collection> collections = await hadithService.getCollections();
+  print('Available Collections:' + collections.toString());
 
-  // Get collection data
-  print(getCollectionData(Collections.bukhari, Languages.en));
+  List<Book> books = await hadithService.getBooks(Collection.bukhari);
+  print('Books for Sahih Bukhari:');
+  for (var book in books) {
+    print("${books.indexOf(book) + 1}. " + book.book[0].name);
+  }
 
-  // Get books of a collection
-  print(getBooks(Collections.bukhari));
+  Book book = await hadithService.getBook(Collection.bukhari, 1);
+  print(book);
 
-  // Get a single book
-  print(getBook(Collections.bukhari, 1));
+  List<Hadith> hadiths = await hadithService.getHadiths(Collection.bukhari, 1);
+  print('Hadiths for Sahih Bukhari, Book 1: ${hadiths.length}');
 
-  // Get book data
-  print(getBookData(Collections.bukhari, 1, Languages.en));
+  Hadith? hadith = await hadithService.getHadith(Collection.bukhari, 1, 1);
+  if (hadith != null) {
+    print('Hadith 1: ${hadith.hadith}');
+  } else {
+    print('Hadith not found');
+  }
 
-  // Get hadiths of a book
-  print(getHadiths(Collections.bukhari, 1));
+  String collectionURL = hadithService.getCollectionURL(Collection.bukhari);
+  print('Collection URL: $collectionURL');
 
-  // Get a single hadith
-  print(getHadith(Collections.bukhari, 1, 1));
+  String hadithURL = hadithService.getHadithURL(Collection.bukhari, 1, 1);
+  print('Hadith URL: $hadithURL');
 
-  // Get hadith data
-  print(getHadithData(Collections.bukhari, 1, 1, Languages.en));
-
-  // Get hadith data by hadith number
-  print(getHadithDataByNumber(Collections.bukhari, '1', Languages.en));
-  print(getHadithDataByNumber(Collections.muslim, '36 b', Languages.en));
-
-  // Get collection URL
-  print(getCollectionURL(Collections.bukhari));
-
-  // Get book URL
-  print(getBookURL(Collections.bukhari, 1));
+  String bookURL = hadithService.getBookURL(Collection.bukhari, 1);
+  print('Book URL: $bookURL');
 }

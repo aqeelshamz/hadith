@@ -22,27 +22,22 @@ To use this plugin, add `hadith` as a [dependency in your pubspec.yaml file](htt
 **_Collections:_**
 
 - **`getCollections()`** - Returns a list of Hadith collections available
-- **`getCollection(Collection collection)`** - Takes [collection] as an argument and returns a [Collection] object.
-- **`getCollectionData(Collections collection, Languages language)`** - Takes [collection] and [language] as arguments and returns a [CollectionData] object.
 
 **Books:\_**
 
 - **`getBooks(Collections collection)`** - Takes [collection] as an argument and returns a list of [Book] objects.
 - **`getBook(Collections collection, int bookNumber)`** - Takes [collection] and [bookNumber] as arguments and returns a [Book] object.
-- **`getBookData(Collections collection, int bookNumber, Languages language)`** - Takes [collection], [bookNumber] and [language] as arguments and returns a [BookData] object.
 
 **_Hadiths:_**
 
 - **`getHadiths(Collections collection, int bookNumber)`** - Takes [collection] and [bookNumber] as arguments and returns a list of [Hadith] objects.
 - **`getHadith(Collections collection, int bookNumber, int hadithNumber)`** - Takes [collection], [bookNumber] and [hadithNumber] as arguments and returns a [Hadith] object.
-- **`getHadithByNumber(Collections collection, String hadithNumber)`** - Takes [collection] and [hadithNumber] as arguments and returns a [Hadith] object.
-- **`getHadithData(Collections collection, int bookNumber, int hadithNumber, Languages language)`** - Takes [collection], [bookNumber], [hadithNumber] and [language] as arguments and returns a [HadithData] object.
-- **`getHadithDataByNumber(Collections collection, String hadithNumber, Languages language)`** - Takes [collection], [hadithNumber] and [language] as arguments and returns a [HadithData] object.
 
 **_URLs:_**
 
 - **`getCollectionURL(Collections collection)`** - Takes [collection] as argument and returns the URL (from sunnah.com) of that collection
 - **`getBookURL(Collections collection, int bookNumber)`** - Takes [collection] and [bookNumber] as arguments and returns the URL (from sunnah.com) of that book
+- **`getHadithURL(Collections collection, int bookNumber, int hadithNumber)`** - Takes [collection], [bookNumber] and [hadithNumber] as arguments and returns the URL (from sunnah.com) of that hadith
 
 **Enums:**
 
@@ -55,11 +50,6 @@ To use this plugin, add `hadith` as a [dependency in your pubspec.yaml file](htt
 - Nasai - **`Collections.nasai`**
 - Ibn Majah - **`Collections.ibnmajah`**
 
-**_Languages:_**
-
-- English - **`Languages.en`**
-- Arabic - **`Languages.ar`**
-
 ## Example
 
 **Collections:**
@@ -70,39 +60,26 @@ _Get available collections:_
 import 'package:hadith/hadith.dart';
 
 void main() {
-  print(getCollections());
-}
-```
+  HadithService hadithService = HadithService();
 
-_Get a single collection:_
-
-```dart
-import 'package:hadith/hadith.dart';
-
-void main() {
-  print(getCollection(Collections.bukhari));
-}
-```
-
-_Get collection data:_
-
-```dart
-import 'package:hadith/hadith.dart';
-
-void main() {
-  print(getCollectionData(Collections.bukhari, Languages.en));
+  List<Collection> collections = await hadithService.getCollections();
+  print('Available Collections:' + collections.toString());
 }
 ```
 
 **Books:**
 
-_Get books of a collection:_
+_Get books in a collection:_
 
 ```dart
 import 'package:hadith/hadith.dart';
 
 void main() {
-  print(getBooks(Collections.bukhari));
+  List<Book> books = await hadithService.getBooks(Collection.bukhari);
+  print('Books for Sahih Bukhari:');
+  for (var book in books) {
+    print("${books.indexOf(book) + 1}. " + book.book[0].name);
+  }
 }
 ```
 
@@ -112,29 +89,21 @@ _Get a single book:_
 import 'package:hadith/hadith.dart';
 
 void main() {
-  print(getBook(Collections.bukhari, 1));
-}
-```
-
-_Get book data:_
-
-```dart
-import 'package:hadith/hadith.dart';
-
-void main() {
-  print(getBookData(Collections.bukhari, 1, Languages.en));
+  Book book = await hadithService.getBook(Collection.bukhari, 1);
+  print(book);
 }
 ```
 
 **Hadiths:**
 
-_Get hadiths of a book:_
+_Get hadiths in a book:_
 
 ```dart
 import 'package:hadith/hadith.dart';
 
 void main() {
-  print(getHadiths(Collections.bukhari, 1));
+  List<Hadith> hadiths = await hadithService.getHadiths(Collection.bukhari, 1);
+  print('Hadiths for Sahih Bukhari, Book 1: ${hadiths.length}');
 }
 ```
 
@@ -144,35 +113,12 @@ _Get a single hadith:_
 import 'package:hadith/hadith.dart';
 
 void main() {
-  print(getHadith(Collections.bukhari, 1, 1));
-}
-```
-
-_Get hadith data:_
-
-```dart
-import 'package:hadith/hadith.dart';
-
-void main() {
-  print(getHadithData(Collections.bukhari, 1, 1, Languages.en));
-}
-```
-
-_Get hadith data by hadith number:_
-
-```dart
-import 'package:hadith/hadith.dart';
-
-void main() {
-  print(getHadithDataByNumber(Collections.bukhari, '1', Languages.en));
-}
-```
-
-```dart
-import 'package:hadith/hadith.dart';
-
-void main() {
-  print(getHadithDataByNumber(Collections.muslim, '36 b', Languages.en));
+  Hadith? hadith = await hadithService.getHadith(Collection.bukhari, 1, 1);
+  if (hadith != null) {
+    print('Hadith 1: ${hadith.hadith}');
+  } else {
+    print('Hadith not found');
+  }
 }
 ```
 
@@ -184,7 +130,8 @@ _Get collection URL:_
 import 'package:hadith/hadith.dart';
 
 void main() {
-  print(getCollectionURL(Collections.bukhari));
+  String collectionURL = hadithService.getCollectionURL(Collection.bukhari);
+  print('Collection URL: $collectionURL');
 }
 ```
 
@@ -194,6 +141,18 @@ _Get book URL:_
 import 'package:hadith/hadith.dart';
 
 void main() {
-  print(getBookURL(Collections.bukhari, 1));
+  String bookURL = hadithService.getBookURL(Collection.bukhari, 1);
+  print('Book URL: $bookURL');
+}
+```
+
+_Get hadith URL:_
+
+```dart
+import 'package:hadith/hadith.dart';
+
+void main() {
+  String hadithURL = hadithService.getHadithURL(Collection.bukhari, 1, 1);
+  print('Hadith URL: $hadithURL');
 }
 ```

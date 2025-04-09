@@ -1,5 +1,4 @@
 // hadith_service.dart
-
 import 'dart:convert';
 import 'dart:io';
 import 'classes.dart';
@@ -7,16 +6,16 @@ import 'enums.dart';
 
 class HadithService {
   // Caches to store loaded data and prevent re-reading files
-  final Map<CollectionType, List<Book>> _booksCache = {};
-  final Map<CollectionType, Map<String, dynamic>> _hadithsCache = {};
+  final Map<Collection, List<Book>> _booksCache = {};
+  final Map<Collection, Map<String, dynamic>> _hadithsCache = {};
 
   /// Returns the name of the collection as a string.
-  String _getCollectionName(CollectionType collection) {
+  String _getCollectionName(Collection collection) {
     return collection.toString().split('.').last;
   }
 
   /// Loads books data for the specified collection.
-  Future<List<Book>> loadBooks(CollectionType collection) async {
+  Future<List<Book>> getBooks(Collection collection) async {
     if (_booksCache.containsKey(collection)) {
       return _booksCache[collection]!;
     }
@@ -38,7 +37,7 @@ class HadithService {
   }
 
   /// Loads hadiths data for the specified collection.
-  Future<Map<String, dynamic>> loadHadiths(CollectionType collection) async {
+  Future<Map<String, dynamic>> _loadHadiths(Collection collection) async {
     if (_hadithsCache.containsKey(collection)) {
       return _hadithsCache[collection]!;
     }
@@ -59,31 +58,35 @@ class HadithService {
   }
 
   /// Returns a list of all available collections.
-  Future<List<CollectionType>> getCollections() async {
+  Future<List<Collection>> getCollections() async {
     // Assuming all collections have corresponding directories and files
     // Alternatively, you can scan the 'data' directory to find available collections
-    return CollectionType.values;
+    return Collection.values;
   }
 
   /// Fetches a specific book by its number from a collection.
-  Future<Book> getBook(CollectionType collection, String bookNumber) async {
-    List<Book> books = await loadBooks(collection);
+  Future<Book> getBook(Collection collection, int bookNumber) async {
+    List<Book> books = await getBooks(collection);
     return books.firstWhere(
-      (book) => book.bookNumber == bookNumber,
-      orElse: () =>
-          throw Exception('Book number $bookNumber not found in $collection.'),
+      (book) => book.bookNumber == bookNumber.toString(),
+      orElse: () => throw Exception(
+        'Book number $bookNumber not found in $collection.',
+      ),
     );
   }
 
   /// Fetches all hadiths for a specific book in a collection.
   Future<List<Hadith>> getHadiths(
-      CollectionType collection, String bookNumber) async {
-    Map<String, dynamic> hadithsData = await loadHadiths(collection);
-    String bookKey = bookNumber;
+    Collection collection,
+    int bookNumber,
+  ) async {
+    Map<String, dynamic> hadithsData = await _loadHadiths(collection);
+    String bookKey = bookNumber.toString();
 
     if (!hadithsData.containsKey(bookKey)) {
       throw Exception(
-          'Hadiths not found for book number $bookNumber in $collection.');
+        'Hadiths not found for book number $bookNumber in $collection.',
+      );
     }
 
     List<dynamic> hadithList = hadithsData[bookKey];
@@ -91,11 +94,14 @@ class HadithService {
   }
 
   /// Fetches a specific hadith by book number and hadith number.
-  Future<Hadith?> getHadithByNumber(
-      CollectionType collection, String bookNumber, String hadithNumber) async {
+  Future<Hadith?> getHadith(
+    Collection collection,
+    int bookNumber,
+    int hadithNumber,
+  ) async {
     List<Hadith> hadiths = await getHadiths(collection, bookNumber);
     for (Hadith hadith in hadiths) {
-      if (hadith.hadithNumber == hadithNumber) {
+      if (hadith.hadithNumber == hadithNumber.toString()) {
         return hadith;
       }
     }
@@ -103,31 +109,35 @@ class HadithService {
   }
 
   /// Returns the URL for a specific collection.
-  String getCollectionURL(CollectionType collection) {
+  String getCollectionURL(Collection collection) {
     String baseURL = "https://sunnah.com";
     String collectionName = _getCollectionName(collection);
     return "$baseURL/$collectionName";
   }
 
   /// Returns the URL for a specific book in a collection.
-  String getBookURL(CollectionType collection, String bookNumber) {
+  String getBookURL(Collection collection, int bookNumber) {
     return "${getCollectionURL(collection)}/$bookNumber";
   }
 
   /// Returns the URL for a specific hadith in a collection.
   String getHadithURL(
-      CollectionType collection, String bookNumber, String hadithNumber) {
+    Collection collection,
+    int bookNumber,
+    int hadithNumber,
+  ) {
     return "${getBookURL(collection, bookNumber)}/$hadithNumber";
   }
 
   /// Takes [collection] and [language] and returns the collection data for that language.
   Future<List<CollectionData>> getCollectionData(
-      CollectionType collection, Languages language) async {
+    Collection collection,
+    Languages language,
+  ) async {
     // Implement this method based on your collections data structure
     // For example, load from a 'collections.json' file
     throw UnimplementedError(
-        "Implement this method based on your collections data structure.");
+      "Implement this method based on your collections data structure.",
+    );
   }
-
-  /// Additional methods can be implemented as needed
 }

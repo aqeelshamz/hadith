@@ -1,12 +1,13 @@
-import 'enums.dart';
-
 class CollectionData {
   final String lang;
   final String title;
   final String shortIntro;
 
-  CollectionData(
-      {required this.lang, required this.title, required this.shortIntro});
+  CollectionData({
+    required this.lang,
+    required this.title,
+    required this.shortIntro,
+  });
 
   factory CollectionData.fromJson(Map<String, dynamic> json) {
     return CollectionData(
@@ -68,10 +69,7 @@ class BookData {
   BookData({required this.lang, required this.name});
 
   factory BookData.fromJson(Map<String, dynamic> json) {
-    return BookData(
-      lang: json['lang'],
-      name: json['name'],
-    );
+    return BookData(lang: json['lang'], name: json['name']);
   }
 
   @override
@@ -118,16 +116,10 @@ class Grade {
   final String? gradedBy;
   final String grade;
 
-  Grade({
-    this.gradedBy,
-    required this.grade,
-  });
+  Grade({this.gradedBy, required this.grade});
 
   factory Grade.fromJson(Map<String, dynamic> json) {
-    return Grade(
-      gradedBy: json['graded_by'],
-      grade: json['grade'],
-    );
+    return Grade(gradedBy: json['graded_by'], grade: json['grade']);
   }
 
   @override
@@ -154,8 +146,6 @@ class HadithData {
   });
 
   factory HadithData.fromJson(Map<String, dynamic> json) {
-    print("Parsing HadithData: $json"); // Debugging line
-
     var gradesFromJson =
         (json['grades'] as List).map((data) => Grade.fromJson(data)).toList();
     return HadithData(
@@ -190,8 +180,6 @@ class Hadith {
   });
 
   factory Hadith.fromJson(Map<String, dynamic> json) {
-    print("Parsing Hadith: $json"); // Debugging line
-
     var hadithList = (json['hadith'] as List)
         .map((data) => HadithData.fromJson(data))
         .toList();
